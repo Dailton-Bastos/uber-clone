@@ -1,0 +1,7 @@
+build
+coverage
+yarn.lock
+.gitignore
+README.md
+.vscode/settings.json
+nativewind-env.d.ts
