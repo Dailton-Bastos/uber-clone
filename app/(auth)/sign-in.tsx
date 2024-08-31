@@ -1,6 +1,7 @@
 import React from 'react'
-import { Link } from 'expo-router'
-import { Text, ScrollView, View, Image } from 'react-native'
+import { Link, useRouter } from 'expo-router'
+import { Text, ScrollView, View, Image, Alert } from 'react-native'
+import { useSignIn } from '@clerk/clerk-expo'
 import { InputField } from '@/components/InputField'
 import { CustomButton } from '@/components/CustomButton'
 import { OAuth } from '@/components/OAuth'
@@ -12,7 +13,32 @@ const SignIn = () => {
 		password: '',
 	})
 
-	const onSignInPress = React.useCallback(async () => {}, [])
+	const { signIn, setActive, isLoaded } = useSignIn()
+
+	const router = useRouter()
+
+	const onSignInPress = React.useCallback(async () => {
+		if (!isLoaded) {
+			return
+		}
+
+		try {
+			const signInAttempt = await signIn.create({
+				identifier: form.email,
+				password: form.password,
+			})
+
+			if (signInAttempt.status === 'complete') {
+				await setActive({ session: signInAttempt.createdSessionId })
+
+				return router.replace('/(root)/(tabs)/home')
+			}
+		} catch (err: any) {
+			// See https://clerk.com/docs/custom-flows/error-handling
+
+			Alert.alert('Error', err.errors[0].longMessage)
+		}
+	}, [isLoaded, signIn, form, setActive, router])
 
 	return (
 		<ScrollView className="flex-1 bg-white">

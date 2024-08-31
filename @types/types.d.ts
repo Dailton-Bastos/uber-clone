@@ -137,3 +137,15 @@ declare interface DriverCardProps {
 	selected: number
 	setSelected: () => void
 }
+
+declare interface TokenCache {
+	getToken: (key: string) => Promise<string | undefined | null>
+	saveToken: (key: string, token: string) => Promise<void>
+	clearToken?: (key: string) => void
+}
+
+declare interface VerificationSignUp {
+	state: 'default' | 'pending' | 'success' | 'failed'
+	error: string
+	code: string
+}
