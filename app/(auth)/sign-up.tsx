@@ -8,6 +8,7 @@ import { CustomButton } from '@/components/CustomButton'
 import { OAuth } from '@/components/OAuth'
 import { icons, images } from '@/constants'
 import type { VerificationSignUp } from '@/@types/types'
+import { fetchAPI } from '@/lib/fetch'
 
 const SignUp = () => {
 	const [form, setForm] = React.useState({
@@ -57,7 +58,15 @@ const SignUp = () => {
 			})
 
 			if (completeSignUp.status === 'complete') {
-				// TODO: Create a database user
+				await fetchAPI('/(api)/user', {
+					method: 'POST',
+					body: JSON.stringify({
+						name: form.name,
+						email: form.email,
+						clerkId: completeSignUp.createdUserId,
+					}),
+				})
+
 				await setActive({ session: completeSignUp.createdSessionId })
 
 				setVerification((prev) => ({ ...prev, state: 'success' }))
@@ -79,7 +88,7 @@ const SignUp = () => {
 				state: 'failed',
 			}))
 		}
-	}, [isLoaded, verification, setActive, signUp])
+	}, [isLoaded, verification, setActive, signUp, form])
 
 	return (
 		<ScrollView className="flex-1 bg-white">
