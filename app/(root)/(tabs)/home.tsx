@@ -13,6 +13,7 @@ import {
 	View,
 } from 'react-native'
 import { GoogleTextInput } from '@/components/GoogleTextInput'
+import { Map } from '@/components/Map'
 
 export default function Page() {
 	const { user } = useUser()
@@ -72,8 +73,12 @@ export default function Page() {
 					<Text className="text-xl font-JakartaBold mt-5 mb-3">
 						Your current location
 					</Text>
-					<View className="flex flex-row items-center bg-transparent h-[300px]"></View>
+					<View className="flex flex-row items-center bg-transparent h-[300px]">
+						<Map />
+					</View>
 				</>
+
+				<Text className="text-xl font-JakartaBold mt-5 mb-3">Recent Rides</Text>
 			</>
 		)
 	}
