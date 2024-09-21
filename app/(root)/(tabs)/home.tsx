@@ -1,4 +1,5 @@
 import React from 'react'
+import * as Location from 'expo-location'
 import { RideCard } from '@/components/RideCard'
 import { icons, images } from '@/constants'
 import { recentRides } from '@/utils/mock'
@@ -14,15 +15,51 @@ import {
 } from 'react-native'
 import { GoogleTextInput } from '@/components/GoogleTextInput'
 import { Map } from '@/components/Map'
+import { useLocationStore } from '@/store'
 
 export default function Page() {
+	const [hasPermissions, setHasPerissions] = React.useState(false)
+
 	const { user } = useUser()
+
+	const { setUserLocation, setDestinationLocation } = useLocationStore()
 
 	const loading = true
 
 	const handleSignOut = React.useCallback(() => {}, [])
 
 	const handleDestinationPress = React.useCallback(() => {}, [])
+
+	const requestLocation = React.useCallback(async () => {
+		const { status } = await Location.requestForegroundPermissionsAsync()
+
+		if (status !== 'granted') {
+			setHasPerissions(false)
+
+			return
+		}
+
+		const location = await Location.getCurrentPositionAsync()
+
+		if (!location) return
+
+		const address = await Location.reverseGeocodeAsync({
+			latitude: location.coords?.latitude,
+			longitude: location.coords?.longitude,
+		})
+
+		setUserLocation({
+			// latitude: location.coords?.latitude,
+			// longitude: location.coords?.longitude,
+			latitude: -5.1111425,
+			longitude: -42.84125,
+			address: `${address[0]?.name}, ${address[0]?.region}`,
+		})
+	}, [setUserLocation])
+
+	React.useEffect(() => {
+		requestLocation()
+	}, [requestLocation])
 
 	const listEmptyComponent = () => {
 		return (
