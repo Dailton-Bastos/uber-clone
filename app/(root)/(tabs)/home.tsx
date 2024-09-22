@@ -1,5 +1,6 @@
 import React from 'react'
 import * as Location from 'expo-location'
+import { router } from 'expo-router'
 import { RideCard } from '@/components/RideCard'
 import { icons, images } from '@/constants'
 import { recentRides } from '@/utils/mock'
@@ -28,7 +29,14 @@ export default function Page() {
 
 	const handleSignOut = React.useCallback(() => {}, [])
 
-	const handleDestinationPress = React.useCallback(() => {}, [])
+	const handleDestinationPress = React.useCallback(
+		(location: { latitude: number; longitude: number; address: string }) => {
+			setDestinationLocation(location)
+
+			return router.push('/(root)/find-ride')
+		},
+		[setDestinationLocation],
+	)
 
 	const requestLocation = React.useCallback(async () => {
 		const { status } = await Location.requestForegroundPermissionsAsync()
@@ -49,10 +57,8 @@ export default function Page() {
 		})
 
 		setUserLocation({
-			// latitude: location.coords?.latitude,
-			// longitude: location.coords?.longitude,
-			latitude: -5.1111425,
-			longitude: -42.84125,
+			latitude: location.coords?.latitude,
+			longitude: location.coords?.longitude,
 			address: `${address[0]?.name}, ${address[0]?.region}`,
 		})
 	}, [setUserLocation])
@@ -104,6 +110,7 @@ export default function Page() {
 					icon={icons.search}
 					containerStyle="bg-white shadow-md shadow-neutral-300"
 					handlePress={handleDestinationPress}
+					initialLocation={null}
 				/>
 
 				<>
